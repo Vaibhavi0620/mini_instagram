@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InstaLite</title>
+  <style>
+    :root {
+      --bg: #000000;
+      --card-bg: #121212;
+      --border: #262626;
+      --text-main: #f5f5f5;
+      --text-muted: #a8a8a8;
+      --accent-blue: #0095f6;
+      --accent-hover: #1877f2;
+      --like-red: #ff3040;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    /* Layout */
+    .app-container {
+      display: flex;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    /* Sidebar Navigation */
+    aside {
+      width: 245px;
+      border-right: 1px solid var(--border);
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      padding: 24px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      padding: 0 12px;
+      margin-bottom: 30px;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .nav-item:hover {
+      background-color: #1a1a1a;
+    }
+
+    /* Main Content Area */
+    main {
+      flex: 1;
+      max-width: 630px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* Auth Card */
+    .auth-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 380px;
+      margin: 40px auto;
+      text-align: center;
+    }
+
+    .auth-card input {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .auth-card input:focus {
+      border-color: var(--text-muted);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--accent-blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .toggle-auth {
+      margin-top: 15px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .toggle-auth span {
+      color: var(--accent-blue);
+      cursor: pointer;
+    }
+
+    /* Feed & Posts */
+    .post-card {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .post-username {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .post-image {
+      width: 100%;
+      max-height: 600px;
+      object-fit: cover;
+      background-color: #1a1a1a;
+      display: block;
+    }
+
+    .post-actions {
+      padding: 12px 16px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .post-actions i {
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .post-actions i:active {
+      transform: scale(1.2);
+    }
+
+    .post-actions i.liked {
+      color: var(--like-red);
+      fill: var(--like-red);
+    }
+
+    .post-content {
+      padding: 0 16px 16px;
+    }
+
+    .likes-count {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .caption {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .caption-username {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    /* Create Post Form */
+    .create-post-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .create-post-card textarea {
+      width: 100%;
+      height: 70px;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      resize: none;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    /* Helpers */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside>
+      <div>
+        <div class="brand-logo">InstaLite</div>
+        <ul class="nav-links">
+          <li class="nav-item" onclick="showHome()">🏠 Home</li>
+          <li class="nav-item" onclick="showCreate()">➕ Create</li>
+          <li class="nav-item" onclick="showProfile()">👤 Profile</li>
+        </ul>
+      </div>
+      <div class="nav-item" id="logout-btn" onclick="logout()">↩️ Log Out</div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Authentication View -->
+      <section id="auth-section" class="auth-card">
+        <h2 style="margin-bottom: 20px;" id="auth-title">Login</h2>
+        <form id="auth-form" onsubmit="handleAuth(event)">
+          <input type="text" id="auth-name" name="name" placeholder="Full Name" class="hidden" />
+          <input type="text" id="auth-username" name="username" placeholder="Username" class="hidden" />
+          <input type="email" id="auth-email" placeholder="Email" required />
+          <input type="password" id="auth-password" placeholder="Password" required />
+          <button type="submit" class="btn" id="auth-submit-btn">Log In</button>
+        </form>
+        <div class="toggle-auth">
+          <span id="auth-toggle-text" onclick="toggleAuthMode()">Don't have an account? Sign up</span>
+        </div>
+      </section>
+
+      <!-- Main Feed -->
+      <section id="feed-section" class="hidden">
+        <!-- Create Post Card -->
+        <div class="create-post-card">
+          <textarea id="post-caption" placeholder="Write a caption..."></textarea>
+          <input type="text" id="post-image-url" placeholder="Image URL (e.g. https://picsum.photos/600)" style="width: 100%; padding: 8px; background: #000; border: 1px solid var(--border); border-radius: 6px; color: #fff; margin-bottom: 12px;">
+          <button class="btn" onclick="createPost()">Share</button>
+        </div>
+
+        <!-- Feed Container -->
+        <div id="posts-container">
+          <!-- Dynamically Injected Posts -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const API_BASE = "http://localhost:3000/api";
+    let isSignUp = false;
+    let token = localStorage.getItem("token");
+
+    // Icons are rendered as text placeholders to avoid external script issues.
+
+    // Check Authentication state on load
+    document.addEventListener("DOMContentLoaded", () => {
+      if (token) {
+        showFeed();
+      } else {
+        showAuth();
+      }
+    });
+
+    function showAuth() {
+      document.getElementById("auth-section").classList.remove("hidden");
+      document.getElementById("feed-section").classList.add("hidden");
+    }
+
+    function showFeed() {
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("feed-section").classList.remove("hidden");
+      fetchPosts();
+    }
+
+    function showHome() {
+      showFeed();
+    }
+
+    function showCreate() {
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("feed-section").classList.remove("hidden");
+      document.getElementById("post-caption").focus();
+    }
+
+    function showProfile() {
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("feed-section").classList.remove("hidden");
+      alert("Profile view is not implemented yet");
+    }
+
+    function toggleAuthMode() {
+      isSignUp = !isSignUp;
+      const nameInput = document.getElementById("auth-name");
+      const usernameInput = document.getElementById("auth-username");
+      document.getElementById("auth-title").innerText = isSignUp ? "Sign Up" : "Login";
+      document.getElementById("auth-submit-btn").innerText = isSignUp ? "Sign Up" : "Log In";
+      nameInput.classList.toggle("hidden", !isSignUp);
+      usernameInput.classList.toggle("hidden", !isSignUp);
+      nameInput.disabled = !isSignUp;
+      usernameInput.disabled = !isSignUp;
+      if (!isSignUp) {
+        nameInput.value = "";
+        usernameInput.value = "";
+      }
+      document.getElementById("auth-toggle-text").innerText = isSignUp 
+        ? "Have an account? Log in" 
+        : "Don't have an account? Sign up";
+    }
+
+    async function handleAuth(event) {
+      event.preventDefault();
+      const name = document.getElementById("auth-name").value.trim();
+      const email = document.getElementById("auth-email").value.trim();
+      const password = document.getElementById("auth-password").value;
+      const username = document.getElementById("auth-username").value.trim();
+
+      if (isSignUp) {
+        if (!name || !username || !email || !password) {
+          alert("Name, username, email and password are required");
+          return;
+        }
+      }
+
+      const endpoint = isSignUp ? "/auth/register" : "/auth/login";
+      const payload = isSignUp ? { name, username, email, password } : { email, password };
+
+      try {
+        const res = await fetch(`${API_BASE}${endpoint}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Authentication failed");
+
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          token = data.token;
+          showFeed();
+        } else {
+          alert("Registration successful! Please log in.");
+          toggleAuthMode();
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      token = null;
+      showAuth();
+    }
+
+    async function fetchPosts() {
+      try {
+        const res = await fetch(`${API_BASE}/posts`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const posts = await res.json();
+        renderPosts(posts);
+      } catch (err) {
+        console.error("Failed to fetch posts:", err);
+      }
+    }
+
+    function renderPosts(posts) {
+      const container = document.getElementById("posts-container");
+      container.innerHTML = "";
+
+      if (!Array.isArray(posts) || posts.length === 0) {
+        container.innerHTML = `<p style="text-align: center; color: var(--text-muted);">No posts yet.</p>`;
+        return;
+      }
+
+      posts.forEach(post => {
+        const postEl = document.createElement("article");
+        postEl.className = "post-card";
+        postEl.innerHTML = `
+          <div class="post-header">
+            <div class="avatar">
+              <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${post.user?.username || 'user'}" />
+            </div>
+            <span class="post-username">${post.user?.username || "anonymous"}</span>
+          </div>
+          ${post.imageUrl ? `<img class="post-image" src="${post.imageUrl}" alt="Post image" />` : ''}
+          <div class="post-actions">
+            <button class="btn" onclick="likePost('${post._id}')" style="width:auto; padding:8px 12px; margin-top:8px;">❤️ Like</button>
+          </div>
+          <div class="post-content">
+            <div class="likes-count">${post.likes || 0} likes</div>
+            <div class="caption">
+              <span class="caption-username">${post.user?.username || "anonymous"}</span>
+              ${post.caption || ""}
+            </div>
+          </div>
+        `;
+        container.appendChild(postEl);
+      });
+    }
+
+    async function createPost() {
+      const caption = document.getElementById("post-caption").value;
+      const imageUrl = document.getElementById("post-image-url").value;
+
+      if (!caption && !imageUrl) return;
+
+      try {
+        const payload = { caption };
+        if (imageUrl) payload.imageUrl = imageUrl;
+
+        const res = await fetch(`${API_BASE}/posts`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          document.getElementById("post-caption").value = "";
+          document.getElementById("post-image-url").value = "";
+          fetchPosts();
+        }
+      } catch (err) {
+        console.error("Error creating post:", err);
+      }
+    }
+
+    async function likePost(postId) {
+      if (!token) {
+        alert("Please log in first");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/posts/${postId}/like`, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || "Unable to like post");
+
+        alert(data.message || "Post liked");
+        fetchPosts();
+      } catch (err) {
+        console.error("Error liking post:", err);
+        alert(err.message);
+      }
+    }
+  </script>
+</body>
+</html>
